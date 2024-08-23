@@ -18,10 +18,10 @@ function App() {
     if (!token) return;
     dispatch(saveProfile(token));
   }, [authState.isLoggedIn, dispatch]);
-
+  const client = process.env.REACT_APP_GOOGLE_CLIENT_ID;
   return (
     <>
-      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT}>
+      <GoogleOAuthProvider clientId={client}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />

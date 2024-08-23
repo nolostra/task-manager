@@ -3,7 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import validateManyFields from "../validations";
 import Input from "./utils/Input";
 import { useDispatch, useSelector } from "react-redux";
-import { postLoginData, postGoogleLoginData } from "../redux/actions/authActions";
+import {
+  postLoginData,
+  postGoogleLoginData,
+} from "../redux/actions/authActions";
 import Loader from "./utils/Loader";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
@@ -20,14 +23,12 @@ const LoginForm = ({ redirectUrl }) => {
   const { loading, isLoggedIn } = authState;
   const dispatch = useDispatch();
 
-  useEffect(() => {console.log(redirectUrl);
+  useEffect(() => {
+    console.log(redirectUrl);
     if (isLoggedIn) {
-      
       navigate(redirectUrl || "/");
     }
   }, [authState, redirectUrl, isLoggedIn, navigate]);
-
-
 
   const handleChange = (e) => {
     setFormData({
@@ -62,10 +63,8 @@ const LoginForm = ({ redirectUrl }) => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       // Decode the JWT token
-      const data = jwtDecode(credentialResponse.credential)
-      console.log(data);
-       dispatch(postGoogleLoginData(data.sub, data.email, data.name))
-     
+      const data = jwtDecode(credentialResponse.credential);
+      dispatch(postGoogleLoginData(data.sub, data.email, data.name));
     } catch (error) {
       console.error("Google login failed:", error);
       toast.error("Google login failed");
