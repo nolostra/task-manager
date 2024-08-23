@@ -6,7 +6,6 @@ import MainLayout from '../layouts/MainLayout'
 const Login = () => {
   const { state } = useLocation();
   const redirectUrl = state?.redirectUrl || null;
-
   useEffect(() => {
     document.title = "Login";
   }, []);
