@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import validateManyFields from "../validations";
 import Input from "./utils/Input";
 import { useDispatch, useSelector } from "react-redux";
-import { postLoginData } from "../redux/actions/authActions";
+import { postLoginData, postGoogleLoginData } from "../redux/actions/authActions";
 import Loader from "./utils/Loader";
-import { useEffect } from "react";
-
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 const LoginForm = ({ redirectUrl }) => {
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -19,11 +20,14 @@ const LoginForm = ({ redirectUrl }) => {
   const { loading, isLoggedIn } = authState;
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  useEffect(() => {console.log(redirectUrl);
     if (isLoggedIn) {
+      
       navigate(redirectUrl || "/");
     }
   }, [authState, redirectUrl, isLoggedIn, navigate]);
+
+
 
   const handleChange = (e) => {
     setFormData({
@@ -55,10 +59,27 @@ const LoginForm = ({ redirectUrl }) => {
       {formErrors[field]}
     </p>
   );
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      // Decode the JWT token
+      const data = jwtDecode(credentialResponse.credential)
+      console.log(data);
+       dispatch(postGoogleLoginData(data.sub, data.email, data.name))
+     
+    } catch (error) {
+      console.error("Google login failed:", error);
+      toast.error("Google login failed");
+    }
+  };
+
+  const handleGoogleError = (error) => {
+    console.error("Google login failed:", error);
+    toast.error("Google login failed");
+  };
 
   return (
     <>
-      <form className="m-auto my-16 max-w-[500px]   ">
+      <form className="m-auto my-16 max-w-[500px]">
         {loading ? (
           <Loader />
         ) : (
@@ -66,7 +87,7 @@ const LoginForm = ({ redirectUrl }) => {
             <h2 className="text-left mb-4 font-bold text-2xl text-blue-500">
               Login
             </h2>
-            <div className="border-2 shadow-md rounded-md p-8 bg-white" >
+            <div className="border-2 shadow-md rounded-md p-8 bg-white">
               <div className="mb-4">
                 <label
                   htmlFor="email"
@@ -116,6 +137,12 @@ const LoginForm = ({ redirectUrl }) => {
                   {" "}
                   Signup{" "}
                 </Link>
+              </div>
+              <div className="mt-4">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                />
               </div>
             </div>
           </>
