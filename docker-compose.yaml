@@ -1,0 +1,21 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_GOOGLE_CLIENT_ID=783231031192-nuju5mrncc6fh5skh3i97v63m4a3a8n8.apps.googleusercontent.com
+      - REACT_APP_BACKEND_URL=http://localhost:5000
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URL=mongodb+srv://saiesh1400:OYocSns3BlpOrgf8@cluster0.c5l8q.mongodb.net/task-manager
+      - ACCESS_TOKEN_SECRET=Rj2S?RVe9[]8-dCS6A**&b5Tsg$gwbg~Bd{*QTK
